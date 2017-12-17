@@ -159,16 +159,11 @@ if __name__=='__main__':
     if 'mask' in postprocess and os.path.exists(X_mask):
       result*=mask
       result+=original*(1-mask)
-    if config.include_original:
-      m=imageutils.montage(numpy.concatenate([numpy.expand_dims(original,1),result],axis=1))
-    else:
-      m=imageutils.montage(result)
-    if config.output:
-      opath=config.output
-    else:
-      opath='{}_{}_{}{}.{}'.format(prefix_path,timestamp,config.method,postfix_comment,config.output_format)
-    imageutils.write(opath,m)
-    opathlist.append(opath)
+
+    for r, d in zip(result, delta_params):
+      opath='{}_{}_{}{}_{}.{}'.format(prefix_path,timestamp,config.method,postfix_comment,d,config.output_format)
+      imageutils.write(opath,m)
+      opathlist.append(opath)
   print('Outputs are {}'.format(' '.join(opathlist)))
   t1=time.time()
   print('{} minutes ({} minutes per image).'.format((t1-t0)/60.0,(t1-t0)/60.0/len(X)/len(delta_params)))
